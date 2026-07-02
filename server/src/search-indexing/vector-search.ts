@@ -19,7 +19,7 @@ await collection.createSearchIndex({
 // -----------------------------------------------------------------------------------------------
 // <----------- REPLACE THE PLACEHOLDER BELOW WITH THE CORRECT INDEX TYPE ----------------------->
 // -----------------------------------------------------------------------------------------------
-    type: '<REPLACE_WITH_INDEX_TYPE>',
+    type: 'vectorSearch',
     definition: {
         fields: [
             {
@@ -27,7 +27,7 @@ await collection.createSearchIndex({
 // -----------------------------------------------------------------------------------------------
 // <----------- REPLACE THE PLACEHOLDER BELOW WITH PATH TO THE VECTOR FIELD --------------------->
 // -----------------------------------------------------------------------------------------------
-                path: '<REPLACE_WITH_PATH_TO_VECTOR_FIELD>',
+                path: 'embeddings',
                 numDimensions: 1408,
                 similarity: 'cosine'
             }
