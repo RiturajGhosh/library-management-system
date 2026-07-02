@@ -61,7 +61,8 @@ Use at your own risk; not a supported MongoDB product
 
 ## indexes
 
-```mongosh "mongodb://localhost:27017/library" --quiet --eval '
+```
+  mongosh "mongodb://localhost:27017/library" --quiet --eval '
   db.books.createSearchIndex("fulltextsearch", { mappings: { dynamic: true } });
   print("Creating fulltextsearch index...");
 '
