@@ -58,3 +58,18 @@ npm test
 The project utilizes [Husky](https://typicode.github.io/husky/) to execute actions before every commit. The pre-commit hook, located in [.husky/pre-commit](./.husky/pre-commit), lints the code and runs the API tests.
 
 Use at your own risk; not a supported MongoDB product
+
+## indexes
+
+```mongosh "mongodb://localhost:27017/library" --quiet --eval '
+  db.books.createSearchIndex("fulltextsearch", { mappings: { dynamic: true } });
+  print("Creating fulltextsearch index...");
+'
+
+mongosh "mongodb://localhost:27017/library" --quiet --eval '
+  db.books.createSearchIndex("vectorsearch", "vectorSearch", {
+    fields: [{ type: "vector", path: "embeddings", numDimensions: 1408, similarity: "cosine" }]
+  });
+  print("Creating vectorsearch index...");
+'
+```
