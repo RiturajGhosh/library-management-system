@@ -86,18 +86,52 @@ class BookController {
 
     public async searchBooks(query: string): Promise<Book[]> {
     const vector = await getEmbeddings(query);
+
     const aggregationPipeline = [
       {
-        $vectorSearch: {
-          queryVector: vector,
-          path: 'embeddings',
-          numCandidates: 100,
-          index: 'vectorsearch',
-          limit: 10,
+        $scoreFusion: {
+          input: {
+            pipelines: {
+              semanticSearch: [
+                {
+                  $vectorSearch: {
+                    index: 'vectorsearch',
+                    path: 'embeddings',
+                    queryVector: vector,
+                    numCandidates: 100,
+                    limit: 20,
+                  }
+                }
+              ],
+              lexicalSearch: [
+                {
+                  $search: {
+                    index: 'fulltextsearch',
+                    text: {
+                      query,
+                      path: ['title', 'author', 'genres'],
+                      fuzzy: { maxEdits: 2 }
+                    }
+                  }
+                },
+                { $limit: 20 }
+              ]
+            },
+            normalization: 'sigmoid'
+          },
+          combination: {
+            weights: {
+              semanticSearch: 1,
+              lexicalSearch: 1,
+            }
+          },
+          scoreDetails: true
         }
       },
-      vectorScoreStage
+      hybridScoreStage,
+      { $limit: 100 }
     ];
+
     const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
     return books;
 }
